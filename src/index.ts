@@ -12,19 +12,19 @@ app.get('/api', (req: Request, res: Response) => {
     res.json({ message: 'API çalışıyor!' });
 });
 
-// MongoDB bağlantısı
-const connectDB = async () => {
-    try {
-        if (!process.env.MONGODB_URI) {
-            throw new Error('MONGODB_URI environment variable is not defined');
-        }
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('MongoDB bağlantısı başarılı');
-    } catch (error) {
-        console.error('MongoDB bağlantı hatası:', error);
-        process.exit(1);
-    }
-};
+// // MongoDB bağlantısı
+// const connectDB = async () => {
+//     try {
+//         if (!process.env.MONGODB_URI) {
+//             throw new Error('MONGODB_URI environment variable is not defined');
+//         }
+//         await mongoose.connect(process.env.MONGODB_URI);
+//         console.log('MongoDB bağlantısı başarılı');
+//     } catch (error) {
+//         console.error('MongoDB bağlantı hatası:', error);
+//         process.exit(1);
+//     }
+// };
 
 // Sunucuyu başlat
 const port = process.env.PORT || 3000;
@@ -34,6 +34,6 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-connectDB();
+// connectDB();
 
 export default app; 
