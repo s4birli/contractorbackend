@@ -9,11 +9,11 @@ app.use(express.json());
 
 // Ana route
 app.get('/api', (req: Request, res: Response) => {
-    return res.send({ message: 'API çalışıyor!' });
+    res.status(200).send({ message: 'API çalışıyor!' });
 });
 
 app.get('/', (req: Request, res: Response) => {
-    return res.status(200).send({ message: 'API çalışıyor!' });
+    res.status(200).send({ message: 'API çalışıyor!' });
 });
 
 // // MongoDB bağlantısı
@@ -33,7 +33,9 @@ app.get('/', (req: Request, res: Response) => {
 // Sunucuyu başlat
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    return console.log(`Server ${port} portunda çalışıyor`);
+    console.log(`Server ${port} portunda çalışıyor`);
 });
 
 // connectDB();
+
+// export default app; 
