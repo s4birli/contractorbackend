@@ -1,21 +1,19 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
 
 // Ana route
 app.get('/api', (req: Request, res: Response) => {
-    res.status(200).send({ message: 'API çalışıyor!' });
+    return res.status(200).send({ message: 'API çalışıyor!' });
 });
 
 app.get('/', (req: Request, res: Response) => {
-    res.status(200).send({ message: 'API çalışıyor!' });
+    return res.status(200).send({ message: 'API çalışıyor!' });
 });
 
 // // MongoDB bağlantısı
@@ -35,7 +33,7 @@ app.get('/', (req: Request, res: Response) => {
 // Sunucuyu başlat
 const port = process.env.PORT || 3000;
 app.settings.Server = app.listen(port, () => {
-    console.log(`Server ${port} portunda çalışıyor`);
+    return console.log(`Server ${port} portunda çalışıyor`);
 });
 
 // connectDB();
