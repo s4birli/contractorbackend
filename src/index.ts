@@ -1,41 +1,20 @@
-import express, { Request, Response } from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import express from "express";
 
 const app = express();
-app.use(express.json());
+const port = process.env.PORT || 8080;
 
-// Ana route
-app.get('/api', (req: Request, res: Response) => {
-    return res.status(200).send({ message: 'API çalışıyor!' });
+app.get("/", (_req: any, res: any) => {
+    return res.send("Express Typescript on Vercel");
 });
 
-app.get('/', (req: Request, res: Response) => {
-    return res.status(200).send({ message: 'API çalışıyor!' });
+app.get("/ping", (_req: any, res: any) => {
+    return res.send("pong 🏓");
 });
 
-// // MongoDB bağlantısı
-// const connectDB = async () => {
-//     try {
-//         if (!process.env.MONGODB_URI) {
-//             throw new Error('MONGODB_URI environment variable is not defined');
-//         }
-//         await mongoose.connect(process.env.MONGODB_URI);
-//         console.log('MongoDB bağlantısı başarılı');
-//     } catch (error) {
-//         console.error('MongoDB bağlantı hatası:', error);
-//         process.exit(1);
-//     }
-// };
-
-// Sunucuyu başlat
-const port = process.env.PORT || 3000;
-app.settings.Server = app.listen(port, () => {
-    return console.log(`Server ${port} portunda çalışıyor`);
+app.get("/pong", (_req: any, res: any) => {
+    return res.send("ping 🏓");
 });
 
-// connectDB();
-
-export default app; 
+app.listen(port, () => {
+    return console.log(`Server is listening on ${port}`);
+});
