@@ -12,6 +12,10 @@ app.get('/api', (req: Request, res: Response) => {
     res.json({ message: 'API çalışıyor!' });
 });
 
+app.get('/', (req: Request, res: Response) => {
+    res.json({ message: 'API çalışıyor!' });
+});
+
 // // MongoDB bağlantısı
 // const connectDB = async () => {
 //     try {
