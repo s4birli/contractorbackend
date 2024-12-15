@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path';
 import contactRoutes from './routes/contactRoutes';
 import templateRoutes from './routes/templateRoutes';
 
@@ -8,6 +9,8 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api/contacts', contactRoutes);
 app.use('/api/templates', templateRoutes);
