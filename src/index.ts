@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import contactRoutes from './routes/contactRoutes';
 import templateRoutes from './routes/templateRoutes';
+import aiPromptTemplateRoutes from './routes/aiPromptTemplateRoutes';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api/contacts', contactRoutes);
 app.use('/api/templates', templateRoutes);
+app.use('/api/ai-templates', aiPromptTemplateRoutes);
 
 app.get('/', (req: Request, res: Response) => {
     res.status(200).send({ message: 'API çalışıyor!' });
