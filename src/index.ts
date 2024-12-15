@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import contactRoutes from './routes/contactRoutes';
+import templateRoutes from './routes/templateRoutes';
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/contacts', contactRoutes);
+app.use('/api/templates', templateRoutes);
 
 app.get('/', (req: Request, res: Response) => {
     res.status(200).send({ message: 'API çalışıyor!' });
