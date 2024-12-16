@@ -14,10 +14,15 @@ const app = express();
 
 // CORS ayarları
 app.use(cors({
-    origin: '*', // Tüm originlere izin ver
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    maxAge: 86400 // 24 saat
 }));
+
+// OPTIONS isteklerini işle
+app.options('*', cors());
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
