@@ -23,16 +23,19 @@ const storage = multer.diskStorage({
 
 // Dosya filtreleme
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    // İzin verilen resim dosyası türleri
     const allowedMimes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp'
     ];
 
     if (allowedMimes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only PDF and Word documents are allowed.'));
+        cb(new Error('Invalid file type. Only JPG, JPEG, PNG, GIF and WebP images are allowed.'));
     }
 };
 
