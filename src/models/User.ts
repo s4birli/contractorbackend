@@ -7,7 +7,6 @@ export interface IUser extends Document {
     password: string;
     profileImage?: {
         filename: string;
-        path: string;
         mimetype: string;
         data: Buffer;
     };
@@ -35,7 +34,6 @@ const UserSchema = new Schema<IUser>({
     },
     profileImage: {
         filename: String,
-        path: String,
         mimetype: String,
         data: Buffer
     }

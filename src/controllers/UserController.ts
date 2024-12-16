@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import User, { IUser } from '../models/User';
 import jwt from 'jsonwebtoken';
-import fs from 'fs/promises';
 
 interface FileRequest extends Request {
     file?: Express.Multer.File;
@@ -16,7 +15,11 @@ export class UserController {
     public async register(req: FileRequest, res: Response): Promise<void> {
         try {
             console.log('Register request body:', req.body);
-            console.log('Register request file:', req.file);
+            console.log('Register request file:', req.file ? {
+                fieldname: req.file.fieldname,
+                mimetype: req.file.mimetype,
+                size: req.file.size
+            } : 'No file');
 
             const { name, email, password } = req.body;
 
@@ -48,18 +51,13 @@ export class UserController {
             // Profil resmi yüklendiyse
             if (req.file) {
                 try {
-                    console.log('Reading file:', req.file.path);
-                    const imageData = await fs.readFile(req.file.path);
                     Object.assign(userData, {
                         profileImage: {
                             filename: req.file.originalname,
-                            path: req.file.path,
                             mimetype: req.file.mimetype,
-                            data: imageData
+                            data: req.file.buffer // Binary veriyi doğrudan kullan
                         }
                     });
-                    // Geçici dosyayı sil
-                    await fs.unlink(req.file.path);
                 } catch (error) {
                     console.error('File processing error:', error);
                     res.status(500).json({
@@ -194,26 +192,12 @@ export class UserController {
                 return;
             }
 
-            // Eski profil resmini sil
-            if (user.profileImage?.path) {
-                try {
-                    await fs.unlink(user.profileImage.path);
-                } catch (error) {
-                    console.error('Error deleting old profile image:', error);
-                }
-            }
-
             // Yeni resmi kaydet
-            const imageData = await fs.readFile(req.file.path);
             user.profileImage = {
                 filename: req.file.originalname,
-                path: req.file.path,
                 mimetype: req.file.mimetype,
-                data: imageData
+                data: req.file.buffer
             };
-
-            // Geçici dosyayı sil
-            await fs.unlink(req.file.path);
 
             await user.save();
 
