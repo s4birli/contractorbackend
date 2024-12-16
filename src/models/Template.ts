@@ -39,4 +39,4 @@ const TemplateSchema = new Schema<ITemplate>({
 // İndeks oluşturma
 TemplateSchema.index({ name: 1 });
 
-export default mongoose.model<ITemplate>('Template', TemplateSchema); 
+export default mongoose.model<ITemplate>('Template', TemplateSchema, 'Template'); 

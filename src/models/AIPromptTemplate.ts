@@ -52,4 +52,4 @@ const AIPromptTemplateSchema = new Schema<IAIPromptTemplate>({
 AIPromptTemplateSchema.index({ name: 1 });
 AIPromptTemplateSchema.index({ agent: 1 });
 
-export default mongoose.model<IAIPromptTemplate>('AIPromptTemplate', AIPromptTemplateSchema); 
+export default mongoose.model<IAIPromptTemplate>('AIPromptTemplate', AIPromptTemplateSchema, 'AIPromptTemplate'); 
