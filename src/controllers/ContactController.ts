@@ -95,4 +95,44 @@ export class ContactController {
             res.status(500).json({ success: false, error: 'Internal server error' });
         }
     }
+
+    // Delete contact
+    public async deleteContact(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+
+            // Geçerli bir MongoDB ObjectId kontrolü
+            if (!isValidObjectId(id)) {
+                res.status(400).json({
+                    success: false,
+                    error: 'Geçersiz contact ID formatı'
+                });
+                return;
+            }
+
+            const contact = await Contact.findById(id);
+            if (!contact) {
+                res.status(404).json({
+                    success: false,
+                    error: 'Contact bulunamadı'
+                });
+                return;
+            }
+
+            // Soft delete - isActive'i false yap
+            contact.isActive = false;
+            await contact.save();
+
+            res.status(200).json({
+                success: true,
+                message: 'Contact başarıyla silindi'
+            });
+        } catch (error) {
+            console.error('Delete contact error:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
 } 
