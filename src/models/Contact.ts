@@ -6,7 +6,7 @@ export interface IContact extends Document {
     email: string;
     phoneNumber?: string;
     note?: string;
-    companyId?: string;
+    companyName?: string;
     webSite?: string;
     type: 'agent' | 'client' | 'vendor' | 'other';
     isActive: boolean;
@@ -20,7 +20,7 @@ const ContactSchema = new Schema<IContact>({
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: String },
     note: { type: String },
-    companyId: { type: String },
+    companyName: { type: String },
     webSite: { type: String },
     type: {
         type: String,

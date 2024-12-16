@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -12,13 +12,13 @@ dotenv.config();
 const app = express();
 
 // CORS middleware
-const allowCors = (fn: Function) => async (req: Request, res: Response) => {
+const allowCors = (req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
     );
 
     if (req.method === 'OPTIONS') {
@@ -26,17 +26,19 @@ const allowCors = (fn: Function) => async (req: Request, res: Response) => {
         return;
     }
 
-    return await fn(req, res);
+    next();
 };
 
+// Global middleware'ler
 app.use(express.json());
+app.use(allowCors);  // Tüm route'lar için CORS'u etkinleştir
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Route'ları CORS middleware ile sarmala
-app.use('/api/contacts', (req, res) => allowCors(contactRoutes)(req, res));
-app.use('/api/templates', (req, res) => allowCors(templateRoutes)(req, res));
-app.use('/api/ai-templates', (req, res) => allowCors(aiPromptTemplateRoutes)(req, res));
-app.use('/api/users', (req, res) => allowCors(userRoutes)(req, res));
+// API route'ları
+app.use('/api/contacts', contactRoutes);
+app.use('/api/templates', templateRoutes);
+app.use('/api/ai-templates', aiPromptTemplateRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req: Request, res: Response) => {
     res.status(200).send({ message: 'API çalışıyor!' });
