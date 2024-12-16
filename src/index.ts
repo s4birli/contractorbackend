@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
-import cors from 'cors';
 import contactRoutes from './routes/contactRoutes';
 import templateRoutes from './routes/templateRoutes';
 import aiPromptTemplateRoutes from './routes/aiPromptTemplateRoutes';
@@ -12,25 +11,32 @@ dotenv.config();
 
 const app = express();
 
-// CORS ayarları
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    credentials: true,
-    maxAge: 86400 // 24 saat
-}));
+// CORS middleware
+const allowCors = (fn: Function) => async (req: Request, res: Response) => {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
 
-// OPTIONS isteklerini işle
-app.options('*', cors());
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    return await fn(req, res);
+};
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.use('/api/contacts', contactRoutes);
-app.use('/api/templates', templateRoutes);
-app.use('/api/ai-templates', aiPromptTemplateRoutes);
-app.use('/api/users', userRoutes);
+// Route'ları CORS middleware ile sarmala
+app.use('/api/contacts', (req, res) => allowCors(contactRoutes)(req, res));
+app.use('/api/templates', (req, res) => allowCors(templateRoutes)(req, res));
+app.use('/api/ai-templates', (req, res) => allowCors(aiPromptTemplateRoutes)(req, res));
+app.use('/api/users', (req, res) => allowCors(userRoutes)(req, res));
 
 app.get('/', (req: Request, res: Response) => {
     res.status(200).send({ message: 'API çalışıyor!' });
