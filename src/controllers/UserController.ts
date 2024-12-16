@@ -15,6 +15,9 @@ export class UserController {
     // Kullanıcı kaydı
     public async register(req: FileRequest, res: Response): Promise<void> {
         try {
+            console.log('Register request body:', req.body);
+            console.log('Register request file:', req.file);
+
             const { name, email, password } = req.body;
 
             // Zorunlu alanları kontrol et
@@ -44,27 +47,39 @@ export class UserController {
 
             // Profil resmi yüklendiyse
             if (req.file) {
-                const imageData = await fs.readFile(req.file.path);
-                Object.assign(userData, {
-                    profileImage: {
-                        filename: req.file.originalname,
-                        path: req.file.path,
-                        mimetype: req.file.mimetype,
-                        data: imageData
-                    }
-                });
-                // Geçici dosyayı sil
-                await fs.unlink(req.file.path);
+                try {
+                    console.log('Reading file:', req.file.path);
+                    const imageData = await fs.readFile(req.file.path);
+                    Object.assign(userData, {
+                        profileImage: {
+                            filename: req.file.originalname,
+                            path: req.file.path,
+                            mimetype: req.file.mimetype,
+                            data: imageData
+                        }
+                    });
+                    // Geçici dosyayı sil
+                    await fs.unlink(req.file.path);
+                } catch (error) {
+                    console.error('File processing error:', error);
+                    res.status(500).json({
+                        success: false,
+                        error: 'Error processing profile image'
+                    });
+                    return;
+                }
             }
 
+            console.log('Creating new user...');
             const user = new User(userData);
             await user.save();
+            console.log('User created successfully');
 
             // JWT token oluştur
             const token = jwt.sign(
                 { userId: user._id },
                 process.env.JWT_SECRET || 'your-secret-key',
-                { expiresIn: '24h' }
+                { expiresIn: '48h' }
             );
 
             res.status(201).json({
@@ -79,6 +94,7 @@ export class UserController {
                 }
             });
         } catch (error: unknown) {
+            console.error('Register error details:', error);
             const mongoError = error as MongoError;
             if (mongoError.code === 11000) {
                 res.status(400).json({
@@ -87,10 +103,10 @@ export class UserController {
                 });
                 return;
             }
-            console.error('Register error:', error);
             res.status(500).json({
                 success: false,
-                error: 'Internal server error'
+                error: 'Internal server error',
+                details: process.env.NODE_ENV === 'development' ? error : undefined
             });
         }
     }

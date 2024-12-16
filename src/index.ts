@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
+import cors from 'cors';
 import contactRoutes from './routes/contactRoutes';
 import templateRoutes from './routes/templateRoutes';
 import aiPromptTemplateRoutes from './routes/aiPromptTemplateRoutes';
@@ -10,8 +11,15 @@ import userRoutes from './routes/userRoutes';
 dotenv.config();
 
 const app = express();
-app.use(express.json());
 
+// CORS ayarları
+app.use(cors({
+    origin: '*', // Tüm originlere izin ver
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api/contacts', contactRoutes);
