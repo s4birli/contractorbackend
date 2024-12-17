@@ -5,12 +5,22 @@ import upload from '../utils/fileUpload';
 const router = Router();
 const templateController = new TemplateController();
 
-router.get('/search/templates', templateController.searchTemplates);
-router.get('/stats/overview', templateController.getTemplateStats);
+// Tüm template'leri listele
+router.get('/', templateController.getAllTemplates);
+
+// Template isimleri ve ID'lerini listele
 router.get('/names', templateController.getTemplateNames);
-router.post('/', upload.single('attachment'), templateController.createTemplate);
-router.put('/:id', upload.single('attachment'), templateController.updateTemplate);
+
+// ID'ye göre tek bir template getir
 router.get('/:id', templateController.getTemplateById);
-router.get('/:id/download', templateController.downloadAttachment);
+
+// Yeni template oluştur
+router.post('/', upload.single('attachment'), templateController.createTemplate);
+
+// Template güncelle
+router.put('/:id', upload.single('attachment'), templateController.updateTemplate);
+
+// Template sil
+router.delete('/:id', templateController.deleteTemplate);
 
 export default router; 

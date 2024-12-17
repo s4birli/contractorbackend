@@ -1,36 +1,45 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { Request } from 'express';
 
-// uploads klasörünü oluştur
+// Upload klasörünü oluştur
 const uploadDir = 'uploads';
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Dosya yükleme için depolama ayarları
-const storage = multer.memoryStorage(); // Binary veri için memory storage kullan
+// Storage konfigürasyonu
+const storage = multer.diskStorage({
+    destination: function (_req, _file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (_req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
 
-// Dosya filtreleme
-const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    // İzin verilen resim dosyası türleri
+// File filter - sadece belirli dosya türlerini kabul et
+const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    // İzin verilen dosya türleri
     const allowedMimes = [
         'image/jpeg',
-        'image/jpg',
         'image/png',
         'image/gif',
-        'image/webp'
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain'
     ];
 
     if (allowedMimes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only JPG, JPEG, PNG, GIF and WebP images are allowed.'));
+        cb(new Error('Invalid file type. Only images, PDFs, DOC, DOCX and TXT files are allowed.'));
     }
 };
 
-// Multer yapılandırması
+// Multer konfigürasyonu
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,

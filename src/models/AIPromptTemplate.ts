@@ -4,9 +4,7 @@ export interface IAIPromptTemplate extends Document {
     name: string;
     agent: string;
     prompt: string;
-    attachFile: boolean;
-    attachEmail: boolean;
-    file?: {
+    attachment?: {
         filename: string;
         path: string;
         mimetype: string;
@@ -31,15 +29,7 @@ const AIPromptTemplateSchema = new Schema<IAIPromptTemplate>({
         type: String,
         required: true
     },
-    attachFile: {
-        type: Boolean,
-        default: false
-    },
-    attachEmail: {
-        type: Boolean,
-        default: false
-    },
-    file: {
+    attachment: {
         filename: String,
         path: String,
         mimetype: String

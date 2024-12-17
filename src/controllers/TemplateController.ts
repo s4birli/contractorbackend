@@ -385,4 +385,72 @@ export class TemplateController {
             });
         }
     }
+
+    // Get all templates
+    public async getAllTemplates(req: Request, res: Response): Promise<void> {
+        try {
+            const templates = await Template.find({})
+                .sort({ createdAt: -1 })
+                .select('-__v');
+
+            res.status(200).json({
+                success: true,
+                data: templates
+            });
+        } catch (error) {
+            console.error('Get all templates error:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Delete template
+    public async deleteTemplate(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+
+            // Geçerli bir MongoDB ObjectId kontrolü
+            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+                res.status(400).json({
+                    success: false,
+                    error: 'Invalid template ID format'
+                });
+                return;
+            }
+
+            const template = await Template.findById(id);
+
+            if (!template) {
+                res.status(404).json({
+                    success: false,
+                    error: 'Template not found'
+                });
+                return;
+            }
+
+            // Eğer dosya varsa, önce dosyayı sil
+            if (template.attachment?.path) {
+                try {
+                    await fs.unlink(template.attachment.path);
+                } catch (error) {
+                    console.error('Error deleting file:', error);
+                }
+            }
+
+            await Template.findByIdAndDelete(id);
+
+            res.status(200).json({
+                success: true,
+                message: 'Template successfully deleted'
+            });
+        } catch (error) {
+            console.error('Delete template error:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
 } 
